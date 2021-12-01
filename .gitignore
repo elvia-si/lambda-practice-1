@@ -17,6 +17,11 @@ crash.log
 # example.tfvars
 *.tfvars
 
+#ignore zip
+*.zip
+__pycache__
+
+
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf
