@@ -5,9 +5,9 @@ provider "aws" {
 #Create new bucket
 resource "aws_s3_bucket" "my_lambda_bucket" {
   bucket = "ta-954444250632-lambda-lab"
-  
+
   versioning {
-      enabled = true
+    enabled = true
   }
 
   tags = {
@@ -22,7 +22,7 @@ resource "aws_s3_bucket_object" "sample_data" {
 
   bucket = aws_s3_bucket.my_lambda_bucket.id
 
-  key    = "data-to-test-lambda"
+  key = "data-to-test-lambda"
 
   source = "./sample_data.json"
 
@@ -34,57 +34,57 @@ resource "aws_s3_bucket_object" "sample_data" {
 resource "aws_iam_role" "iam_for_lambda_practice1" {
   name = "lambda-practice1"
 
-    assume_role_policy = jsonencode({
-  "Version" = "2012-10-17"
-  "Statement" = [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-})
+  assume_role_policy = jsonencode({
+    "Version" = "2012-10-17"
+    "Statement" = [
+      {
+        "Action" : "sts:AssumeRole",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
+        },
+        "Effect" : "Allow",
+        "Sid" : ""
+      }
+    ]
+  })
 }
 
 #IAM read and write policies and cloudwatch logger
 resource "aws_iam_policy" "lambda_practice1_policy" {
-    name = "lambda-practice1-policy"
+  name = "lambda-practice1-policy"
 
   policy = jsonencode({
-  "Version" = "2012-10-17"
-  "Statement" = [
-   {
-        "Sid": "ListBuckets",
-        "Effect": "Allow",
-        "Action": ["s3:ListAllMyBuckets"],
-        "Resource": "*"
-    },
-    {
+    "Version" = "2012-10-17"
+    "Statement" = [
+      {
+        "Sid" : "ListBuckets",
+        "Effect" : "Allow",
+        "Action" : ["s3:ListAllMyBuckets"],
+        "Resource" : "*"
+      },
+      {
         "Sid" : "s3access",
         "Action" : [
-          "s3:GetObject",
-          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:*Object",
         ],
         "Effect" : "Allow",
         "Resource" : [
-          "arn:aws:s3:::ta-954444250632-lambda-lab", 
+          "arn:aws:s3:::ta-954444250632-lambda-lab",
           "arn:aws:s3:::ta-954444250632-lambda-lab/*"
         ]
       },
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-})
+      {
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Effect" : "Allow",
+        "Resource" : "*"
+      }
+    ]
+  })
 }
 
 #Attach IAM Role and policies
@@ -112,19 +112,19 @@ data "archive_file" "my_lambda_read_function" {
 
 #Lambda function
 resource "aws_lambda_function" "s3_read_function" {
-   filename = "lambda.zip"
-   source_code_hash = data.archive_file.my_lambda_read_function.output_base64sha256
-   function_name = "index"
-   role = aws_iam_role.iam_for_lambda_practice1.arn
-   handler = "index.lambda_handler"
-   runtime = "python3.8"
+  filename         = "lambda.zip"
+  source_code_hash = data.archive_file.my_lambda_read_function.output_base64sha256
+  function_name    = "index"
+  role             = aws_iam_role.iam_for_lambda_practice1.arn
+  handler          = "index.lambda_handler"
+  runtime          = "python3.8"
 
-#    environment {
-#        variables = {
-#            BUCKET = "ta-954444250632-lambda-lab",
-#            REGION = "eu-west-1"
-#        }
-#    }
+  #    environment {
+  #        variables = {
+  #            BUCKET = "ta-954444250632-lambda-lab",
+  #            REGION = "eu-west-1"
+  #        }
+  #    }
 }
 
 
