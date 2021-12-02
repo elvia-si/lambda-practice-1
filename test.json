@@ -1,0 +1,5 @@
+{
+    "S3Bucket": "ta-954444250632-lambda-lab",
+    "S3Prefix": "data-to-test-lambda",
+    "PetName": "Meowsalot"
+  }
